@@ -304,7 +304,10 @@ namespace Engine.ViewModels
             }
             else
             {
-                Console.WriteLine("test");
+                //yes killing the monster and setting CurrentMonster property to null will run the setter code of this property
+                //which unsubscribes to OnCurrentMonsterKilled, and since value is now null subscribing to OnCurrentMonsterKilled with new monster
+                //will not occur
+                CurrentMonster = null;
             }
         }
         

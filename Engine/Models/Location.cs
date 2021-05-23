@@ -58,37 +58,43 @@ namespace Engine.Models
         public Monster GetMonster()
         {
             //checks if there are any monsters at this location
-            if (!MonstersHere.Any())
+            if (MonstersHere.Any())
             {
-                return null;
-            }
-            
-            //Total the percentage of all monsters at this location
-            int totalChances = MonstersHere.Sum(m => m.ChanceOfEncountering);
-
-            int randomNumber = RandomNumberGenerator.NumberBetween(1, totalChances);
-
-            
-            // Loop through the monster list, 
-            // adding the monster's percentage chance of appearing to the runningTotal variable.
-            // When the random number is lower than the runningTotal,
-            // that is the monster to return. (I don't believe this approach would return more then once monster)
-            
-            //I THINK, this is for determining which monster gets chosen, not so much the chance of encountering a monster
-            int runningTotal = 0;
-
-            foreach (MonsterEncounter monsterEncounter in MonstersHere)
-            {
-                runningTotal += monsterEncounter.ChanceOfEncountering;
-
-                if (randomNumber <= runningTotal)
+                //determine if a monster encounter will occur
+                int chanceOfBattle = RandomNumberGenerator.NumberBetween(1, 100);
+                
+                if (chanceOfBattle <= 70)
                 {
-                    return MonsterFactory.GetMonster(monsterEncounter.MonsterId);
+                    //Total the percentage of all monsters at this location
+                    int totalChances = MonstersHere.Sum(m => m.ChanceOfEncountering);
+
+                    int randomNumber = RandomNumberGenerator.NumberBetween(1, totalChances);
+
+            
+                    // Loop through the monster list, 
+                    // adding the monster's percentage chance of appearing to the runningTotal variable.
+                    // When the random number is lower than the runningTotal,
+                    // that is the monster to return. (I don't believe this approach would return more then one monster)
+            
+                    //I THINK, this is for determining which monster gets chosen, not so much the chance of encountering a monster
+                    int runningTotal = 0;
+
+                    foreach (MonsterEncounter monsterEncounter in MonstersHere)
+                    {
+                        runningTotal += monsterEncounter.ChanceOfEncountering;
+
+                        if (randomNumber <= runningTotal)
+                        {
+                            return MonsterFactory.GetMonster(monsterEncounter.MonsterId);
+                        }
+                    }
+            
+                    //if there was a problem return the last monster in the list
+                    return MonsterFactory.GetMonster(MonstersHere.Last().MonsterId);  
                 }
             }
             
-            //if there was a problem return the last monster in the list
-            return MonsterFactory.GetMonster(MonstersHere.Last().MonsterId);
+            return null;
         }
     }
 }
