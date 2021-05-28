@@ -68,6 +68,11 @@ namespace TextBaseRpgUI
         {
             _gameSession.UseCurrentConsumable();
         }
+
+        private void OnClick_AttemptEscape(object sender, RoutedEventArgs e)
+        {
+            _gameSession.EscapeCurrentMonsterEncounter();
+        }
         
         private void OnGameMessageRaised(object sender, GameMessageEventArgs e)
         {

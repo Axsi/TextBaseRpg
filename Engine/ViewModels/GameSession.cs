@@ -112,7 +112,8 @@ namespace Engine.ViewModels
                 
                 // OnPropertyChanged(nameof(CurrentMonster));
                 OnPropertyChanged(); //same here we are calling from CurrentMonster property so we don't need nameof when we are using [CallerMemberName]
-                OnPropertyChanged(nameof(HasMonster));
+                OnPropertyChanged(nameof(HasMonster)); //right so I assume this onPropertyChanged would also help reveal the escape button
+                OnPropertyChanged(nameof(NotEngagedInBattle));
             }
         }
 
@@ -143,6 +144,9 @@ namespace Engine.ViewModels
         //this HasMonster function is similiar to the above functions like "HasLocationToWest" but instead of using get, we are using
         //an expression body "=> ..." It is basically the same as saying "return ..." Seems to do the same thing as the get call, but cleaner
         public bool HasMonster => CurrentMonster != null;
+
+        //created NotEngagedInBattle property as a simple way to disable movement buttons in battle
+        public bool NotEngagedInBattle => CurrentMonster == null;
         
         //we use HasTrader function here to help us hide or show the trader button
         public bool HasTrader => CurrentTrader != null;
@@ -320,6 +324,25 @@ namespace Engine.ViewModels
             }
             
             CurrentPlayer.UseCurrentConsumable();
+        }
+
+        public void EscapeCurrentMonsterEncounter()
+        {
+            if (HasMonster)
+            {
+                int chanceOfEscape = RandomNumberGenerator.NumberBetween(1, 100);
+
+                if (chanceOfEscape <= 40)
+                {
+                    RaiseMessage($"You have escaped from the {CurrentMonster.Name}!");
+                    CurrentMonster = null;
+                }
+                else
+                {
+                    RaiseMessage("You failed to escape.");
+                    CurrentMonster.UseCurrentWeaponOn(CurrentPlayer);
+                }
+            }
         }
         
         private void OnCurrentPlayerPerformedAction(object sender, string result)
